@@ -28,7 +28,13 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  "tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell"
+];
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -50,6 +56,40 @@ const followersArray = [];
     </div>
 */
 
+const createCard = person=>{
+  const cardDiv = document.createElement('div');
+  const cardImg = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const header = document.createElement('h3');
+  const username = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+  const profileLink = document.createElement('a');
+
+  cardDiv.classList.add('card')  ;
+  header.classList.add('name');
+  username.classList.add('username');
+  cardInfo.classList.add('card-info');
+
+  cardDiv.append(cardImg, cardInfo);
+  cardInfo.append(header, username, location,profile, followers, following, bio);
+  profile.append(profileLink);
+
+  header.textContent = person.name;
+  cardImg.src = (person.avatar_url);
+  username.textContent = person.username;
+  location.textContent = `Location: ${person.location}`;
+  profileLink.href = person.url;
+  profile.textContent = `Profile: ${profileLink}`;
+  followers.textContent = `Followers: ${person.followers}`;
+  following.textContent = `Following: ${person.following}`;
+  bio.textContent = `Bio: ${person.bio}`;
+
+  return cardDiv
+}
 /*
   List of LS Instructors Github username's:
     tetondan
@@ -58,3 +98,24 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+const cards = document.querySelector('.cards');
+
+const nickCard = axios.get('https://api.github.com/users/nick-ussery')
+  .then(response=>{
+    cards.append(createCard(response.data));
+  }).catch(err=>{
+    console.log("ERROR", err)
+    return err
+  });
+
+followersArray.forEach((follower)=>{
+  followerUrl = `https://api.github.com/users/${follower}`
+  axios.get(followerUrl)
+  .then(response=>{
+    cards.append(createCard(response.data));
+  })
+  .catch(err=>{
+    console.log('ERROR', err)
+  })
+});
